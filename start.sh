@@ -16,7 +16,7 @@ docker run -d --name weather-lcd \
     --restart unless-stopped \
     --privileged \
     --device=/dev/i2c-1 \
-    --device=/dev/gpiomem \  # 加入 GPIO 存取權限給 DHT11
+    --device=/dev/gpiomem \
     weather-display
 
 # 顯示容器狀態

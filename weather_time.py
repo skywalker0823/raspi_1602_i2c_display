@@ -271,8 +271,8 @@ def main():
         now = datetime.now()
         # 根據秒數決定冒號或空格
         separator = ':' if now.second % 2 == 0 else ' '
-        # 組合時間字串
-        time_str = now.strftime(f"%Y %b%d %H{separator}%02M")
+        # 組合時間字串，移除年份，加入星期幾
+        time_str = now.strftime(f"%b%d %a %H{separator}%02M")
         centered_time = time_str.center(LCD_WIDTH)
         
         # 每60秒更新一次天氣資訊

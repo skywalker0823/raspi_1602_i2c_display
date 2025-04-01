@@ -13,13 +13,13 @@ CWB_URL = f"https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Author
 weather_icons = {
     # 晴天系列
     "晴天": (0, "Clear"),
-    "晴時多雲": (0, "MClear"),
-    "多雲時晴": (1, "PClear"),
+    "晴時多雲": (0, "Clear"),
+    "多雲時晴": (1, "Cloud"),
     
     # 多雲系列
     "多雲": (1, "Cloud"),
-    "多雲時陰": (1, "MCloud"),
-    "陰時多雲": (1, "MCloud"),
+    "多雲時陰": (1, "Cloud"),
+    "陰時多雲": (1, "Cloud"),
     "陰天": (1, "Cloud"),
     
     # 陣雨系列
@@ -30,7 +30,7 @@ weather_icons = {
     
     # 其他天氣類型
     "雷陣雨": (3, "Storm"),
-    "局部陣雨": (2, "LRain"),
+    "局部陣雨": (2, "Rain"),
     "有霧": (1, "Foggy")
 }
 

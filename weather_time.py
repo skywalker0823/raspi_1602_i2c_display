@@ -212,6 +212,7 @@ def get_weather():
         min_temp = None
         max_temp = None
         weather = None
+        pop = None  # 降雨機率
         
         # 遍歷所有天氣元素
         for element in location["weatherElement"]:
@@ -221,19 +222,26 @@ def get_weather():
                 max_temp = element["time"][0]["parameter"]["parameterName"]
             elif element["elementName"] == "Wx":
                 weather = element["time"][0]["parameter"]["parameterName"]
+            elif element["elementName"] == "PoP":  # 新增降雨機率的處理
+                pop = element["time"][0]["parameter"]["parameterName"]
         
         # 如果有取得溫度和天氣狀況
         if min_temp and max_temp and weather:
             temp = f"{min_temp}-{max_temp}"
             icon_num, weather_text = weather_icons.get(weather, (None, "Unknown"))
+            
+            # 如果有降雨機率且天氣和降雨有關,則顯示機率
+            rain_related = ["小雨", "中雨", "大雨", "雷陣雨", "局部陣雨", "陰短暫雨"]
+            if pop and weather in rain_related:
+                weather_text = f"{weather_text}{pop}%"
+                
             if icon_num is not None:
-                # 返回帶有圖示代碼的字符串
                 return f"{temp}C {chr(icon_num)} {weather_text}"
             return f"{temp}C {weather_text}"
         else:
             return "Data Missing"
     except Exception as e:
-        print(f"Error: {e}")  # 印出錯誤以便調試
+        print(f"Error: {e}")
         return "Weather Err"
 
 def test_api():

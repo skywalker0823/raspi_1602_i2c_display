@@ -267,8 +267,8 @@ def main():
     frame = 0
     
     while True:
-        # 修改時間格式，移除秒數顯示
-        now = datetime.now().strftime("%Y %b %d %H:%M")
+        # 修改時間格式：年份 月日連在一起 分鐘用兩位數
+        now = datetime.now().strftime("%Y %b%d %H:%02M")
         centered_time = now.center(LCD_WIDTH)  # 置中時間
         
         # 每60秒更新一次天氣資訊

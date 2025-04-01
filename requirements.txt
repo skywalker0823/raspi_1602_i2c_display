@@ -1,0 +1,6 @@
+smbus2
+requests
+python-dotenv
+adafruit-circuitpython-dht
+Adafruit-Blinka
+RPi.GPIO

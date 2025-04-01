@@ -4,6 +4,8 @@ import requests
 from datetime import datetime
 from dotenv import load_dotenv
 import os
+import board
+import adafruit_dht
 
 # 載入 .env 檔案
 load_dotenv()
@@ -17,6 +19,11 @@ LCD_LINE_1 = 0x80
 LCD_LINE_2 = 0xC0
 LCD_BACKLIGHT = 0x08
 ENABLE = 0b00000100
+
+# 在檔案開頭的全域變數區域加入
+DHT_PIN = board.D17  # DHT11 連接到 GPIO 17
+dht_device = adafruit_dht.DHT11(DHT_PIN)
+DISPLAY_SWITCH_TIME = 5  # 每5秒切換一次顯示
 
 # ☀️ 天氣譯名
 weather_dict = {
@@ -296,40 +303,62 @@ def test_api():
     except Exception as e:
         print(f"API測試發生錯誤: {e}")
 
+def get_indoor_climate():
+    """獲取室內溫濕度"""
+    try:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
+        if temperature is not None and humidity is not None:
+            return f"In:{temperature}C {humidity}%"
+        return "DHT Error"
+    except Exception as e:
+        print(f"DHT11 Error: {e}")
+        return "DHT Error"
+
 def main():
     lcd_init()
     
     last_weather_update = 0
     weather_info = "Loading..."
+    indoor_info = "Loading..."
     last_time = time.time()
     frame = 0
+    show_weather = True  # 用來切換顯示內容
     
     while True:
-        # 取得當前時間
         now = datetime.now()
-        # 根據秒數決定冒號或空格
         separator = ':' if now.second % 2 == 0 else ' '
-        # 組合時間字串，移除年份，加入星期幾
         time_str = now.strftime(f"%b%d %a %H{separator}%02M")
         centered_time = time_str.center(LCD_WIDTH)
         
         # 每60秒更新一次天氣資訊
         if time.time() - last_weather_update > 60:
             weather_info = get_weather()
+            indoor_info = get_indoor_climate()
             last_weather_update = time.time()
-            print(f"已更新天氣資訊: {weather_info}")
+            print(f"已更新資訊: {weather_info} | {indoor_info}")
         
         # 更新動畫幀
         create_custom_chars(frame)
         frame = (frame + 1) % 2
         
+        # 顯示時間在第一行
         lcd_string(centered_time, LCD_LINE_1)
-        lcd_string(weather_info.center(LCD_WIDTH), LCD_LINE_2)  # 置中天氣資訊
         
-        next_time = last_time + 1  # 計算下次應該執行的時間點
-        sleep_time = max(0, next_time - time.time())  # 避免 sleep 變成負數
+        # 根據切換狀態顯示天氣或室內資訊
+        if show_weather:
+            lcd_string(weather_info.center(LCD_WIDTH), LCD_LINE_2)
+        else:
+            lcd_string(indoor_info.center(LCD_WIDTH), LCD_LINE_2)
+        
+        # 每 DISPLAY_SWITCH_TIME 秒切換一次顯示內容
+        if int(time.time()) % DISPLAY_SWITCH_TIME == 0:
+            show_weather = not show_weather
+        
+        next_time = last_time + 1
+        sleep_time = max(0, next_time - time.time())
         time.sleep(sleep_time)
-        last_time = next_time  # 更新 last_time
+        last_time = next_time
 
 if __name__ == "__main__":
     try:

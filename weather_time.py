@@ -267,9 +267,13 @@ def main():
     frame = 0
     
     while True:
-        # 修改時間格式：年份 月日連在一起 分鐘用兩位數
-        now = datetime.now().strftime("%Y %b%d %H:%02M")
-        centered_time = now.center(LCD_WIDTH)  # 置中時間
+        # 取得當前時間
+        now = datetime.now()
+        # 根據秒數決定冒號或空格
+        separator = ':' if now.second % 2 == 0 else ' '
+        # 組合時間字串
+        time_str = now.strftime(f"%Y %b%d %H{separator}%02M")
+        centered_time = time_str.center(LCD_WIDTH)
         
         # 每60秒更新一次天氣資訊
         if time.time() - last_weather_update > 60:

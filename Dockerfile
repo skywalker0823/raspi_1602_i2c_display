@@ -1,5 +1,9 @@
 FROM python:3.9-slim
 
+# 設定時區為台灣
+ENV TZ=Asia/Taipei
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 WORKDIR /app
 
 # 安裝系統相依套件

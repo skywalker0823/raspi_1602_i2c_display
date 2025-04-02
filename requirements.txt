@@ -4,3 +4,4 @@ python-dotenv
 adafruit-circuitpython-dht
 Adafruit-Blinka
 RPi.GPIO
+influxdb-client

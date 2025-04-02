@@ -340,6 +340,9 @@ def get_indoor_climate():
         print(f"DHT11 Error: {e}")
         return "DHT Error"
 
+INDOOR_UPDATE_INTERVAL = 60  # 3分鐘更新一次室內溫濕度
+last_indoor_update = 0
+
 def main():
     lcd_init()
     
@@ -379,6 +382,11 @@ def main():
         # 每 DISPLAY_SWITCH_TIME 秒切換一次顯示內容
         if int(time.time()) % DISPLAY_SWITCH_TIME == 0:
             show_weather = not show_weather
+        
+        # 每 INDOOR_UPDATE_INTERVAL 秒更新一次室內溫濕度
+        if time.time() - last_indoor_update > INDOOR_UPDATE_INTERVAL:
+            indoor_info = get_indoor_climate()
+            last_indoor_update = time.time()
         
         next_time = last_time + 1
         sleep_time = max(0, next_time - time.time())

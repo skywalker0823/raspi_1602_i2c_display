@@ -7,8 +7,8 @@ services:
     devices:
       - "/dev/i2c-1:/dev/i2c-1"
       - "/dev/gpiomem:/dev/gpiomem"
-    depends_on:
-      - influxdb
+    # depends_on:
+    #   - influxdb
     restart: unless-stopped
     env_file: .env
     environment:
@@ -17,20 +17,20 @@ services:
       - INFLUXDB_ORG=${INFLUXDB_ORG}
       - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
 
-  influxdb:
-    image: influxdb:2.0
-    ports:
-      - "8086:8086"
-    volumes:
-      - influxdb_data:/var/lib/influxdb2
-    env_file: .env
-    environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+  # influxdb:
+  #   image: influxdb:2.0
+  #   ports:
+  #     - "8086:8086"
+  #   volumes:
+  #     - influxdb_data:/var/lib/influxdb2
+  #   env_file: .env
+  #   environment:
+  #     - DOCKER_INFLUXDB_INIT_MODE=setup
+  #     - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+  #     - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+  #     - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+  #     - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+  #     - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
 
-volumes:
-  influxdb_data:
+# volumes:
+#   influxdb_data:

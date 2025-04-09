@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 import os
 import board
 import adafruit_dht
-from influxdb_client import InfluxDBClient, Point
-from influxdb_client.client.write_api import SYNCHRONOUS
+# from influxdb_client import InfluxDBClient, Point
+# from influxdb_client.client.write_api import SYNCHRONOUS
 
 # 載入 .env 檔案
 load_dotenv()
@@ -28,18 +28,18 @@ dht_device = adafruit_dht.DHT11(DHT_PIN)
 DISPLAY_SWITCH_TIME = 5  # 每5秒切換一次顯示
 
 # 在 load_dotenv() 後添加
-INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://influxdb:8086')
-INFLUXDB_TOKEN = os.getenv('INFLUXDB_TOKEN', 'your_token')
-INFLUXDB_ORG = os.getenv('INFLUXDB_ORG', 'home')
-INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET', 'weather_data')
+# INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://influxdb:8086')
+# INFLUXDB_TOKEN = os.getenv('INFLUXDB_TOKEN', 'your_token')
+# INFLUXDB_ORG = os.getenv('INFLUXDB_ORG', 'home')
+# INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET', 'weather_data')
 
-# 初始化 InfluxDB 客戶端
-influxdb_client = InfluxDBClient(
-    url=INFLUXDB_URL,
-    token=INFLUXDB_TOKEN,
-    org=INFLUXDB_ORG
-)
-write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
+# 註解掉 InfluxDB 客戶端初始化
+# influxdb_client = InfluxDBClient(
+#     url=INFLUXDB_URL,
+#     token=INFLUXDB_TOKEN,
+#     org=INFLUXDB_ORG
+# )
+# write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
 
 # ☀️ 天氣譯名
 weather_dict = {
@@ -320,20 +320,20 @@ def test_api():
         print(f"API測試發生錯誤: {e}")
 
 def get_indoor_climate():
-    """獲取室內溫濕度並儲存到 InfluxDB"""
+    """獲取室內溫濕度"""
     try:
         temperature = dht_device.temperature
         humidity = dht_device.humidity
         if temperature is not None and humidity is not None:
-            # 儲存數據到 InfluxDB
-            point = Point("climate") \
-                .field("temperature", float(temperature)) \
-                .field("humidity", float(humidity))
-            try:
-                write_api.write(bucket=INFLUXDB_BUCKET, record=point)
-                print(f"已儲存數據: 溫度={temperature}°C, 濕度={humidity}%")
-            except Exception as e:
-                print(f"InfluxDB 儲存錯誤: {e}")
+            # 註解掉 InfluxDB 儲存相關程式碼
+            # point = Point("climate") \
+            #     .field("temperature", float(temperature)) \
+            #     .field("humidity", float(humidity))
+            # try:
+            #     write_api.write(bucket=INFLUXDB_BUCKET, record=point)
+            #     print(f"已儲存數據: 溫度={temperature}°C, 濕度={humidity}%")
+            # except Exception as e:
+            #     print(f"InfluxDB 儲存錯誤: {e}")
             return f"In:{temperature}C {humidity}%"
         return "DHT Error"
     except Exception as e:

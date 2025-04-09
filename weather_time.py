@@ -325,15 +325,7 @@ def get_indoor_climate():
         temperature = dht_device.temperature
         humidity = dht_device.humidity
         if temperature is not None and humidity is not None:
-            # 註解掉 InfluxDB 儲存相關程式碼
-            # point = Point("climate") \
-            #     .field("temperature", float(temperature)) \
-            #     .field("humidity", float(humidity))
-            # try:
-            #     write_api.write(bucket=INFLUXDB_BUCKET, record=point)
-            #     print(f"已儲存數據: 溫度={temperature}°C, 濕度={humidity}%")
-            # except Exception as e:
-            #     print(f"InfluxDB 儲存錯誤: {e}")
+            print(f"室內環境: 溫度={temperature}°C, 濕度={humidity}%")
             return f"In:{temperature}C {humidity}%"
         return "DHT Error"
     except Exception as e:
@@ -345,27 +337,31 @@ last_indoor_update = 0
 
 def main():
     lcd_init()
+    global last_indoor_update  # 修正全域變數問題
     
     last_weather_update = 0
+    last_indoor_update = 0  # 初始化
     weather_info = "Loading..."
     indoor_info = "Loading..."
     last_time = time.time()
     frame = 0
-    show_weather = True  # 用來切換顯示內容
-    
+    show_weather = True
+
     while True:
+        current_time = time.time()
         now = datetime.now()
         separator = ':' if now.second % 2 == 0 else ' '
         time_str = now.strftime(f"%b%d %a %H{separator}%02M")
         centered_time = time_str.center(LCD_WIDTH)
         
-        # 每60秒更新一次天氣資訊
-        if time.time() - last_weather_update > 60:
+        # 每60秒更新一次資訊
+        if current_time - last_weather_update > 60:
             weather_info = get_weather()
             indoor_info = get_indoor_climate()
-            last_weather_update = time.time()
+            last_weather_update = current_time
+            last_indoor_update = current_time
             print(f"已更新資訊: {weather_info} | {indoor_info}")
-        
+
         # 更新動畫幀
         create_custom_chars(frame)
         frame = (frame + 1) % 2

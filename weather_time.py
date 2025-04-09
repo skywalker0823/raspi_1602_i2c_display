@@ -54,6 +54,7 @@ weather_dict = {
     "局部陣雨": "Shower",
     "多雲時陰": "Cloudy",
     "陰短暫雨": "Overcast",
+    "陰陣雨或雷雨": "Rain/Thunder",
 }
 
 # ☁️ 中央氣象局 API 
@@ -200,6 +201,7 @@ weather_icons = {
     "陣雨或雷雨": (3, "Storm"),
     "午後雷陣雨": (3, "Storm"),
     "雷陣雨": (3, "Storm"),
+    "陰陣雨或雷雨": (3, "Storm"),  # 新增這一行
     
     # 局部雨系列 (代碼 29-34)
     "多雲局部陣雨": (2, "Rain"),

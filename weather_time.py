@@ -27,6 +27,7 @@ ENABLE = 0b00000100
 DHT_PIN = board.D17  # DHT11 連接到 GPIO 17
 dht_device = adafruit_dht.DHT11(DHT_PIN)
 DISPLAY_SWITCH_TIME = 5  # 每5秒切換一次顯示
+CUSTOM_MESSAGE = os.getenv('MESSAGE', 'Have a nice day!')  # 從環境變數讀取自定義訊息
 
 # 在 load_dotenv() 後添加
 # INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://influxdb:8086')
@@ -282,15 +283,15 @@ last_indoor_update = 0
 
 def main():
     lcd_init()
-    global last_indoor_update  # 修正全域變數問題
+    global last_indoor_update
     
     last_weather_update = 0
-    last_indoor_update = 0  # 初始化
+    last_indoor_update = 0
     weather_info = "Loading..."
     indoor_info = "Loading..."
     last_time = time.time()
     frame = 0
-    show_weather = True
+    display_mode = 0  # 0:天氣, 1:室內, 2:留言
 
     while True:
         current_time = time.time()
@@ -299,7 +300,6 @@ def main():
         time_str = now.strftime(f"%b%d %a %H{separator}%02M")
         centered_time = time_str.center(LCD_WIDTH)
         
-        # 每60秒更新一次資訊
         if current_time - last_weather_update > 60:
             weather_info = get_weather()
             indoor_info = get_indoor_climate()
@@ -307,24 +307,23 @@ def main():
             last_indoor_update = current_time
             print(f"已更新資訊: {weather_info} | {indoor_info}")
 
-        # 更新動畫幀
         create_custom_chars(frame)
         frame = (frame + 1) % 2
         
-        # 顯示時間在第一行
         lcd_string(centered_time, LCD_LINE_1)
         
-        # 根據切換狀態顯示天氣或室內資訊
-        if show_weather:
+        # 根據顯示模式切換第二行內容
+        if display_mode == 0:
             lcd_string(weather_info.center(LCD_WIDTH), LCD_LINE_2)
-        else:
+        elif display_mode == 1:
             lcd_string(indoor_info.center(LCD_WIDTH), LCD_LINE_2)
+        else:  # display_mode == 2
+            lcd_string(CUSTOM_MESSAGE[:LCD_WIDTH].center(LCD_WIDTH), LCD_LINE_2)
         
         # 每 DISPLAY_SWITCH_TIME 秒切換一次顯示內容
         if int(time.time()) % DISPLAY_SWITCH_TIME == 0:
-            show_weather = not show_weather
+            display_mode = (display_mode + 1) % 3  # 在三種模式間循環
         
-        # 每 INDOOR_UPDATE_INTERVAL 秒更新一次室內溫濕度
         if time.time() - last_indoor_update > INDOOR_UPDATE_INTERVAL:
             indoor_info = get_indoor_climate()
             last_indoor_update = time.time()

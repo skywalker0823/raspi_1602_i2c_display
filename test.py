@@ -1,6 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
+import json
 
 # 載入環境變數
 load_dotenv()
@@ -9,30 +10,9 @@ API_KEY = os.getenv('CWB_API_KEY')
 LOCATION_NAME = os.getenv('LOCATION_NAME', '臺北市')
 CWB_URL = f"https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization={API_KEY}&locationName={LOCATION_NAME}"
 
-# 天氣圖示對應表（從原始程式複製過來）
-weather_icons = {
-    # 晴天系列
-    "晴天": (0, "Clear"),
-    "晴時多雲": (0, "Clear"),
-    "多雲時晴": (1, "Cloud"),
-    
-    # 多雲系列
-    "多雲": (1, "Cloud"),
-    "多雲時陰": (1, "Cloud"),
-    "陰時多雲": (1, "Cloud"),
-    "陰天": (1, "Cloud"),
-    
-    # 陣雨系列
-    "多雲陣雨": (2, "Rain"),
-    "多雲短暫雨": (2, "Rain"),
-    "午後短暫陣雨": (2, "Rain"),
-    "陰短暫雨": (2, "Rain"),
-    
-    # 其他天氣類型
-    "雷陣雨": (3, "Storm"),
-    "局部陣雨": (2, "Rain"),
-    "有霧": (1, "Foggy")
-}
+# 載入天氣圖示對應
+with open('weather_list.json', 'r', encoding='utf-8') as f:
+    weather_icons = json.load(f)
 
 def test_weather_api():
     print("開始測試天氣 API...")
@@ -51,9 +31,9 @@ def test_weather_api():
             for element in location["weatherElement"]:
                 if element["elementName"] == "Wx":
                     weather = element["time"][0]["parameter"]["parameterName"]
-                    weather_code = element["time"][0]["parameter"]["parameterValue"]
+                    # weather_code = element["time"][0]["parameter"]["parameterValue"]
                     print(f"\n3. 目前天氣: {weather}")
-                    print(f"   天氣代碼: {weather_code}")
+                    # print(f"   天氣代碼: {weather_code}")
                     break
             
             # 測試天氣對應
@@ -62,13 +42,12 @@ def test_weather_api():
                 print(f"   原始天氣描述: {weather}")
                 if weather in weather_icons:
                     icon_num, weather_text = weather_icons[weather]
-                    print(f"   對應到的圖示: {icon_num}")
-                    print(f"   對應到的文字: {weather_text}")
+                    print(f"   對應到的圖示編號: {icon_num}")
+                    print(f"   對應到的顯示文字: {weather_text}")
+                    print(f"   完整顯示格式: {weather} -> [{icon_num}] {weather_text}")
                 else:
                     print(f"   *** 錯誤: 在 weather_icons 中找不到 '{weather}' 的對應")
-                    print("   可用的天氣類型:")
-                    for key in weather_icons.keys():
-                        print(f"   - {key}")
+                    print("   可用的天氣類型數量:", len(weather_icons))
             
         else:
             print("錯誤: API 回應中沒有找到天氣資料")

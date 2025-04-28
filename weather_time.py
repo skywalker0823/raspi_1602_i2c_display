@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 import board
 import adafruit_dht
+import json
 # from influxdb_client import InfluxDBClient, Point
 # from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -158,53 +159,9 @@ weather_symbols = {
     ]
 }
 
-# 更新天氣圖示對應
-weather_icons = {
-    # 晴天系列 (代碼 1-3)
-    "晴天": (0, "Clear"),
-    "晴時多雲": (0, "Clear"),
-    "多雲時晴": (1, "Cloud"),
-    
-    # 多雲系列 (代碼 4-7)
-    "多雲": (1, "Cloud"),
-    "多雲時陰": (1, "Cloud"),
-    "陰時多雲": (1, "Cloud"),
-    "陰天": (1, "Cloud"),
-    
-    # 陣雨系列 (代碼 8-11)
-    "多雲陣雨": (2, "Rain"),
-    "多雲短暫雨": (2, "Rain"),
-    "午後短暫陣雨": (2, "Rain"),
-    "陰短暫雨": (2, "Rain"),
-    "多雲時晴短暫陣雨": (2, "Rain"),
-    "多雲時陰短暫陣雨": (2, "Rain"),
-    "陰時多雲短暫雨": (2, "Rain"),
-    
-    # 陣雨/雷雨系列 (代碼 15-18)
-    "多雲陣雨或雷雨": (3, "Storm"),
-    "陣雨或雷雨": (3, "Storm"),
-    "午後雷陣雨": (3, "Storm"),
-    "雷陣雨": (3, "Storm"),
-    "陰陣雨或雷雨": (3, "Storm"),
-    "多雲午後短暫雷陣雨": (3, "Storm"),
-    "陰短暫陣雨或雷雨": (3, "Storm"),
-    
-    # 局部雨系列 (代碼 29-34)
-    "多雲局部陣雨": (2, "Rain"),
-    "多雲局部短暫雨": (2, "Rain"),
-    "局部陣雨": (2, "Rain"),
-    "局部短暫雨": (2, "Rain"),
-    
-    # 有霧系列 (代碼 24-28)
-    "有霧": (1, "Foggy"),
-    "晨霧": (1, "Foggy"),
-    "陰有霧": (1, "Foggy"),
-    
-    # 雪系列 (代碼 42)
-    "下雪": (2, "Snow"),
-    "積冰": (2, "Ice"),
-    "暴風雪": (2, "Snow"),
-}
+# 載入天氣圖示對應
+with open('weather_list.json', 'r', encoding='utf-8') as f:
+    weather_icons = json.load(f)
 
 def create_custom_char(location, char_map):
     """創建自定義字符"""

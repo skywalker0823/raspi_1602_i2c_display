@@ -41,23 +41,6 @@ DISPLAY_SWITCH_TIME = 5  # 每5秒切換一次顯示
 # )
 # write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
 
-# ☀️ 天氣譯名
-weather_dict = {
-    "晴時多雲": "Sunny",
-    "多雲時晴": "Cloudy/Sun",
-    "多雲": "Cloudy",
-    "陰天": "Overcast",
-    "小雨": "Rain",
-    "中雨": "Rain++",
-    "大雨": "HeavyRain",
-    "雷陣雨": "Thunder",
-    "局部陣雨": "Shower",
-    "多雲時陰": "Cloudy",
-    "陰短暫雨": "Overcast",
-    "陰陣雨或雷雨": "Rain/Thunder",
-    "多雲午後短暫雷陣雨": "Cloudy/Thunder",
-}
-
 # ☁️ 中央氣象局 API 
 API_KEY = os.getenv('CWB_API_KEY')  # 從環境變數取得 API Key
 LOCATION_NAME = os.getenv('LOCATION_NAME', '臺北市')  # 從環境變數取得地點，預設值為臺北市
@@ -203,7 +186,8 @@ weather_icons = {
     "午後雷陣雨": (3, "Storm"),
     "雷陣雨": (3, "Storm"),
     "陰陣雨或雷雨": (3, "Storm"),
-    "多雲午後短暫雷陣雨": (3, "Storm"),  # 新增這一行
+    "多雲午後短暫雷陣雨": (3, "Storm"),
+    "陰短暫陣雨或雷雨": (3, "Storm"),
     
     # 局部雨系列 (代碼 29-34)
     "多雲局部陣雨": (2, "Rain"),
